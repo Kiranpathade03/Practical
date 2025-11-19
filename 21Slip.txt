@@ -1,0 +1,57 @@
+-------------------------------------21----------------------
+** Write a python program to remove punctuations from the given string**
+
+ 
+
+ 
+punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+ 
+text = input("Enter a string: ")
+ 
+no_punct = ""
+
+ 
+for char in text:
+    if char not in punctuations:
+        no_punct += char
+
+ 
+print("\nString without punctuation:")
+print(no_punct)
+
+
+Q.2)Write a Python program for the following Cryptarithmetic problems. [ 20 Marks ] GO + TO = OUT ***
+
+ 
+
+from itertools import permutations
+
+letters = ('G', 'O', 'T', 'U')
+ 
+for perm in permutations(range(10), len(letters)):
+    mapping = dict(zip(letters, perm))
+
+    
+    if mapping['G'] == 0 or mapping['T'] == 0 or mapping['O'] == 0:
+        continue
+
+    
+    GO = mapping['G']*10 + mapping['O']
+    TO = mapping['T']*10 + mapping['O']
+    OUT = mapping['O']*100 + mapping['U']*10 + mapping['T']
+
+    
+    if GO + TO == OUT:
+        print("\nSolution Found!")
+        print(f"G = {mapping['G']}")
+        print(f"O = {mapping['O']}")
+        print(f"T = {mapping['T']}")
+        print(f"U = {mapping['U']}")
+        
+        print(f"\nGO  = {GO}")
+        print(f"TO  = {TO}")
+        print("-------------")
+        print(f"OUT = {OUT}")
+        break
+else:
+    print("No solution found!")
