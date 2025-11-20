@@ -1,0 +1,173 @@
+Slip 1 -------------------------
+
+------------------------------------------------ Q1--------------------------------------------------------
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Management Form</title>
+
+    <style>
+        body {
+            background-color: yellow;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 6pt;
+            color: red;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .container {
+            width: 50%;
+            margin: auto;
+            background-color: #A8F4F4;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input, select, textarea {
+            width: 60%;
+            padding: 6px;
+            margin-top: 10px;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .submit-btn {
+            background-color: lightgreen;
+            padding: 8px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .clear-btn {
+            background-color: #6A7CFF;
+            padding: 8px 20px;
+            border: none;
+            cursor: pointer;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Project Management</h2>
+
+<div class="container">
+
+    <form>
+
+        <label>Project Name</label>
+        <input type="text" placeholder="project name"><br>
+
+        <label>Assigned To</label>
+        <select>
+            <option>Er Merry Petision</option>
+            <option>John Doe</option>
+            <option>Raj Sharma</option>
+        </select><br>
+
+        <label>Start Date</label>
+        <input type="date"><br>
+
+        <label>End Date</label>
+        <input type="date"><br>
+
+        <label>Priority</label>
+        <input type="radio" name="priority"> High
+        <input type="radio" name="priority"> Average
+        <input type="radio" name="priority"> Low <br><br>
+
+        <label>Description</label>
+        <textarea rows="2"></textarea><br>
+
+        <div class="buttons">
+            <button class="submit-btn">Submit</button>
+            <button class="clear-btn" type="reset">Clear</button>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>
+
+
+----------------------------------------------- Q2 ---------------------------------------------------------
+
+✅ 1️⃣ Collections (Property System)
+
+We will create 2 collections:
+
+owners
+
+properties
+
+
+✅ 2️⃣ Insert Minimum 05 Documents in Each
+📌 owners Collection
+db.owners.insertMany([
+  { _id: 1, name: "Mr. Patil", city: "Pune" },
+  { _id: 2, name: "Mr. Kulkarni", city: "Mumbai" },
+  { _id: 3, name: "Mr. Deshmukh", city: "Nashik" },
+  { _id: 4, name: "Mr. Shinde", city: "Nagpur" },
+  { _id: 5, name: "Mr. Pawar", city: "Nashik" }
+]);
+
+
+📌 properties Collection
+db.properties.insertMany([
+  { _id: 101, owner_id: 1, area: "Pune", rate: 95000 },
+  { _id: 102, owner_id: 1, area: "Nashik", rate: 120000 },
+  { _id: 103, owner_id: 2, area: "Mumbai", rate: 300000 },
+  { _id: 104, owner_id: 3, area: "Nashik", rate: 70000 },
+  { _id: 105, owner_id: 4, area: "Nagpur", rate: 85000 }
+]);
+
+
+✅ 4️⃣ Queries
+a️⃣ Display area wise property details
+db.properties.find({}, { area: 1, rate: 1, _id: 0 });
+
+
+ b Display property owned by "Mr. Patil" having minimum rate
+db.properties.aggregate([
+  { $match: { owner_id: 1 }},
+  { $sort: { rate: 1 }},
+  { $limit: 1 }
+]);
+
+c Give details of owner whose property is at Nashik
+db.properties.aggregate([
+  { $match: { area: "Nashik" }},
+  {
+    $lookup: {
+      from: "owners",
+      localField: "owner_id",
+      foreignField: "_id",
+      as: "OwnerDetails"
+    }
+  }
+]);
+
+d Display area of property whose rate is less than 100000
+db.properties.find(
+  { rate: { $lt: 100000 }},
+  { area: 1, rate: 1, _id: 0 }
+);

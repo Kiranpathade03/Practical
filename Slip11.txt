@@ -1,0 +1,185 @@
+-------------------------------- 11 ---------------------------------------------------------
+Write a HTML code which will divide web page in three frames. First frame should consists of company name as heading. Second frame should consists of name of departments with hyperlink. Once click on any department, it should display information of that department in third frame.
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Company Frameset</title>
+</head>
+
+<frameset rows="20%,*">
+    <!-- Top Frame -->
+    <frame src="header.html" name="headerFrame">
+
+    <frameset cols="30%,*">
+        <!-- Left Menu -->
+        <frame src="menu.html" name="menuFrame">
+
+        <!-- Right Content -->
+        <frame src="welcome.html" name="contentFrame">
+    </frameset>
+</frameset>
+
+</html>
+
+
+header.html ------
+
+<!DOCTYPE html>
+<html>
+<body style="background-color:lightblue; text-align:center;">
+    <h1>XYZ Company</h1>
+</body>
+</html>
+
+menu.html ------------
+<!DOCTYPE html>
+<html>
+<body style="background-color:#f2f2f2;">
+    <h3>Departments</h3>
+    <a href="hr.html" target="contentFrame">HR Department</a><br><br>
+    <a href="sales.html" target="contentFrame">Sales Department</a><br><br>
+    <a href="it.html" target="contentFrame">IT Department</a><br><br>
+</body>
+</html>
+
+welcome.html--------
+
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Welcome! Select a department from the left.</h2>
+</body>
+</html>
+
+
+hr.html----------------
+
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>HR Department</h2>
+    <p>Handles employee recruitment, training, payroll, and company policies.</p>
+</body>
+</html>
+
+sales.html-----------
+
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Sales Department</h2>
+    <p>Responsible for customer relations, marketing, and increasing company revenue.</p>
+</body>
+</html>
+
+
+it.html------------
+
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>IT Department</h2>
+    <p>Manages company software, hardware, networking, and security systems.</p>
+</body>
+</html>
+
+
+
+---------------------------------------Q2---------------------------------
+
+✅ 1) Data Model (Collections)
+
+We will create 4 collections:
+
+Collection	Description
+products	Stores product details
+customers	Stores customer information
+orders	Stores orders placed by customers
+invoices	Stores invoices for processed orders
+
+
+
+✅ 2) Insert Minimum 5 Documents in Each Collection
+📌 products Collection
+db.products.insertMany([
+ { _id: 1, name: "Laptop", price: 45000, stock: 20 },
+ { _id: 2, name: "Mobile", price: 18000, stock: 50 },
+ { _id: 3, name: "Tablet", price: 22000, stock: 15 },
+ { _id: 4, name: "Printer", price: 12000, stock: 10 },
+ { _id: 5, name: "Keyboard", price: 1500, stock: 100 }
+]);
+
+
+📌 customers Collection
+db.customers.insertMany([
+ { _id: 1, name: "Mr. Rajiv", city: "Pune" },
+ { _id: 2, name: "Amit", city: "Mumbai" },
+ { _id: 3, name: "Sneha", city: "Delhi" },
+ { _id: 4, name: "Rohan", city: "Nashik" },
+ { _id: 5, name: "Priya", city: "Pune" }
+]);
+
+
+📌 orders Collection
+db.orders.insertMany([
+ { _id: 101, customer_id: 1, product_id: 1, quantity: 1, total: 45000 },
+ { _id: 102, customer_id: 2, product_id: 2, quantity: 2, total: 36000 },
+ { _id: 103, customer_id: 3, product_id: 3, quantity: 1, total: 22000 },
+ { _id: 104, customer_id: 1, product_id: 5, quantity: 3, total: 4500 },
+ { _id: 105, customer_id: 4, product_id: 4, quantity: 1, total: 12000 }
+]);
+
+
+📌 invoices Collection
+
+(Only some orders are processed)
+
+db.invoices.insertMany([
+ { invoice_id: 501, order_id: 101, date: "10/08/2023" },
+ { invoice_id: 502, order_id: 102, date: "12/08/2023" },
+ { invoice_id: 503, order_id: 105, date: "15/08/2023" }
+]);
+
+
+✅ 4) Queries
+a) List all products in the inventory
+db.products.find({}, { name: 1, price: 1, _id: 0 });
+
+b) List orders with value > 20000
+db.orders.find({ total: { $gt: 20000 } });
+
+c) List all orders that are NOT processed (invoice not generated)
+db.orders.aggregate([
+  {
+    $lookup: {
+      from: "invoices",
+      localField: "_id",
+      foreignField: "order_id",
+      as: "invoice"
+    }
+  },
+  { $match: { invoice: { $size: 0 } }}
+]);
+
+d) List all orders with invoice for customer "Mr. Rajiv"
+db.orders.aggregate([
+  {
+    $lookup: {
+      from: "customers",
+      localField: "customer_id",
+      foreignField: "_id",
+      as: "cust"
+    }
+  },
+  { $match: { "cust.name": "Mr. Rajiv" }},
+
+  {
+    $lookup: {
+      from: "invoices",
+      localField: "_id",
+      foreignField: "order_id",
+      as: "invoice"
+    }
+  }
+]);
